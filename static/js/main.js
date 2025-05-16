@@ -14,12 +14,36 @@ function hideLoading() {
     overlay.style.display = 'none';
 }
 
+// Función para redimensionar imágenes grandes
+function resizeImage(img, maxSize = 800) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    let width = img.width;
+    let height = img.height;
+    
+    // Calcular el factor de escala
+    if (width > height && width > maxSize) {
+        height = Math.round((height * maxSize) / width);
+        width = maxSize;
+    } else if (height > maxSize) {
+        width = Math.round((width * maxSize) / height);
+        height = maxSize;
+    }
+    
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(img, 0, 0, width, height);
+    
+    return canvas;
+}
+
 async function loadPyodideAndScript() {
     showLoading();
+    await new Promise(resolve => setTimeout(resolve, 50)); 
     try {
         pyodide = await loadPyodide();
         await pyodide.loadPackage("numpy");
-        console.log("Loaded numpy");
 
         const otsuCode = `
 import numpy as np
@@ -90,8 +114,12 @@ document.getElementById("imageInput").addEventListener("change", function () {
         img.onload = function () {
             const container = document.getElementById("originalImageContainer");
             container.innerHTML = "";
-            container.appendChild(img);
-            currentOriginalImage = img;
+            // Redimensionar la imagen si es muy grande
+            const resizedCanvas = resizeImage(img);
+            const resizedImg = new Image();
+            resizedImg.src = resizedCanvas.toDataURL();
+            container.appendChild(resizedImg);
+            currentOriginalImage = resizedImg;
         };
         img.src = e.target.result;
     };
@@ -105,6 +133,7 @@ document.getElementById("processLocalImage").addEventListener("click", async fun
         return;
     }
     showLoading();
+    await new Promise(resolve => setTimeout(resolve, 50)); 
     try {
         await processImage(currentOriginalImage, "resultCanvas");
     } finally {
@@ -114,24 +143,18 @@ document.getElementById("processLocalImage").addEventListener("click", async fun
 
 // Upload original image to server
 document.getElementById("uploadOriginalImage").addEventListener("click", async function() {
-    if (!currentOriginalImage) {
+    const fileInput = document.getElementById("imageInput");
+    const file = fileInput.files[0];
+    if (!file) {
         alert('Por favor, seleccione una imagen primero');
         return;
     }
 
     showLoading();
+    await new Promise(resolve => setTimeout(resolve, 50)); 
     try {
-        // Create a canvas to get the image data
-        const canvas = document.createElement('canvas');
-        canvas.width = currentOriginalImage.width;
-        canvas.height = currentOriginalImage.height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(currentOriginalImage, 0, 0);
-
-        // Convert to blob and upload
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         const formData = new FormData();
-        formData.append('image', blob, currentOriginalFileName);
+        formData.append('image', file);
 
         const response = await fetch('/upload', {
             method: 'POST',
@@ -148,18 +171,23 @@ document.getElementById("uploadOriginalImage").addEventListener("click", async f
 });
 
 // Load server image
-document.getElementById("loadServerImage").addEventListener("click", function() {
+document.getElementById("loadServerImage").addEventListener("click", async function() {
     const select = document.getElementById('serverImages');
     const imagePath = select.value;
     if (!imagePath) return;
 
     showLoading();
+    await new Promise(resolve => setTimeout(resolve, 50)); 
     const img = new Image();
     img.onload = function() {
         const container = document.getElementById("serverImageContainer");
         container.innerHTML = "";
-        container.appendChild(img);
-        currentServerImage = img;
+        // Redimensionar la imagen si es muy grande
+        const resizedCanvas = resizeImage(img);
+        const resizedImg = new Image();
+        resizedImg.src = resizedCanvas.toDataURL();
+        container.appendChild(resizedImg);
+        currentServerImage = resizedImg;
         hideLoading();
     };
     img.onerror = function() {
@@ -176,6 +204,7 @@ document.getElementById("processServerImage").addEventListener("click", async fu
         return;
     }
     showLoading();
+    await new Promise(resolve => setTimeout(resolve, 50)); 
     try {
         await processImage(currentServerImage, "serverResultCanvas");
     } finally {

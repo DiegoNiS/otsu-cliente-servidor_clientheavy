@@ -56,6 +56,22 @@
             margin-top: 15px;
             aspect-ratio: 4/3;
             position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-title {
+            position: relative;
+            z-index: 2;
+            background: white;
+            padding: 0 0 10px 0;
+            margin: 0;
+        }
+
+        .image-content {
+            flex: 1;
+            position: relative;
+            margin-top: 10px;
         }
 
         .image-wrapper {
@@ -142,15 +158,19 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="image-container">
-                        <h3 class="h5 mb-3">Imagen Original</h3>
-                        <div id="originalImageContainer" class="image-wrapper"></div>
+                        <h3 class="h5 image-title">Imagen Original</h3>
+                        <div class="image-content">
+                            <div id="originalImageContainer" class="image-wrapper"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="image-container">
-                        <h3 class="h5 mb-3">Resultado (Binarizado)</h3>
-                        <div class="image-wrapper">
-                            <canvas id="resultCanvas"></canvas>
+                        <h3 class="h5 image-title">Resultado (otsu)</h3>
+                        <div class="image-content">
+                            <div class="image-wrapper">
+                                <canvas id="resultCanvas"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -171,15 +191,19 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="image-container">
-                        <h3 class="h5 mb-3">Imagen del Servidor</h3>
-                        <div id="serverImageContainer" class="image-wrapper"></div>
+                        <h3 class="h5 image-title">Imagen del Servidor</h3>
+                        <div class="image-content">
+                            <div id="serverImageContainer" class="image-wrapper"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="image-container">
-                        <h3 class="h5 mb-3">Resultado (Binarizado)</h3>
-                        <div class="image-wrapper">
-                            <canvas id="serverResultCanvas"></canvas>
+                        <h3 class="h5 image-title">Resultado (otsu)</h3>
+                        <div class="image-content">
+                            <div class="image-wrapper">
+                                <canvas id="serverResultCanvas"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
