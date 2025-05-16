@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otsu Filter</title>
+</head>
+<body>
+    <h1>Algoritmo de Otsu con Pyodide</h1>
+
+    <input type="file" id="imageInput" accept="image/*" />
+    
+    <h3>Imagen Original</h3>
+    <div id="originalImageContainer"></div>
+
+    <h3>Resultado (Binarizado)</h3>
+    <canvas id="resultCanvas"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
